@@ -121,6 +121,10 @@ No real file in that run held a store in an ISOBMFF, GIF, TIFF or JPEG XL
 container. Those are read as the specifications describe and tested only on
 synthetic files. Treat them as unexercised until a real one turns up.
 
+Since then one has, for ISOBMFF: `tests/fixtures/gemini-video.mp4`, an MP4 made with
+Google Gemini, whose store sits in a top-level `uuid` box. A test reads its stated
+fields. GIF, TIFF and JPEG XL are still exercised only on synthetic files.
+
 ## Licence
 
 MIT. The IPTC labels in `IPTC_TERMS` are IPTC's, used under CC BY 4.0.

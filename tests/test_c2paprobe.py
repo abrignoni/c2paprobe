@@ -279,6 +279,27 @@ class Containers(unittest.TestCase):
         self.assertEqual(len(r['stores']), 1)
 
 
+class RealFiles(unittest.TestCase):
+    """Files real producers wrote, from tests/fixtures (see its README)."""
+
+    FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
+
+    def test_gemini_mp4_store_in_isobmff_uuid_box(self):
+        r = c2paprobe.probe(os.path.join(self.FIXTURES, 'gemini-video.mp4'))
+        self.assertEqual(r['container'], 'isobmff')
+        self.assertTrue(r['complete'], r['errors'])
+        self.assertEqual(r['errors'], [])
+        self.assertEqual([(s['where'], s['offset']) for s in r['stores']],
+                         [('ISOBMFF C2PA uuid box', 32)])
+        m = r['manifests'][-1]
+        self.assertEqual(r['active_manifest'], m['label'])
+        self.assertTrue(m['claim_generator'].startswith('Google C2PA Core Generator Library'))
+        self.assertEqual(m['signature']['signed_by'], 'Google LLC (Google Media Processing Services)')
+        self.assertEqual(m['actions'], ['c2pa.created', 'c2pa.edited'])
+        self.assertEqual([s['code'] for s in m['source_types']], ['trainedAlgorithmicMedia'])
+        self.assertIs(m['ai'], True)
+
+
 class Limits(unittest.TestCase):
 
     def test_oversized_block_is_refused_not_read(self):
