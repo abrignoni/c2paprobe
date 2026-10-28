@@ -3,8 +3,8 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "c2paprobe"
-version = "0.1.1"
+name = "c2pareader"
+version = "0.2.0"
 description = "Read-only reader for the Content Credentials (C2PA) and IPTC digital source type a media file declares, as vendored by the LEAPP tools"
 # Standard library only, which is what lets the LEAPP tools vendor it as one file.
 readme = "README.md"
@@ -14,10 +14,10 @@ requires-python = ">=3.10"
 authors = [{ name = "Alexis Brignoni" }]
 
 [project.urls]
-Homepage = "https://github.com/abrignoni/c2paprobe"
+Homepage = "https://github.com/abrignoni/c2pareader"
 
 [project.scripts]
-c2paprobe = "c2paprobe.__main__:main"
+c2pareader = "c2pareader.__main__:main"
 
 [tool.setuptools]
-packages = ["c2paprobe"]
+packages = ["c2pareader"]

@@ -1,4 +1,4 @@
-"""Known-answer tests for c2paprobe, on synthetic files built by tests/build.py."""
+"""Known-answer tests for c2pareader, on synthetic files built by tests/build.py."""
 
 import os
 import sys
@@ -8,14 +8,14 @@ import unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import c2paprobe  # noqa: E402
+import c2pareader  # noqa: E402
 import build  # noqa: E402
 
 XMP = build.xmp()
 
 
 def probe(data):
-    return c2paprobe.probe_bytes(data)
+    return c2pareader.probe_bytes(data)
 
 
 class ManifestContent(unittest.TestCase):
@@ -111,20 +111,20 @@ class SourceTypes(unittest.TestCase):
         }
         for code, ai in cases.items():
             with self.subTest(code=code):
-                self.assertIs(c2paprobe.source_type(build.IPTC + code)['ai'], ai)
+                self.assertIs(c2pareader.source_type(build.IPTC + code)['ai'], ai)
 
     def test_every_iptc_term_has_a_decision_or_is_unknown_on_purpose(self):
-        self.assertEqual(len(c2paprobe.IPTC_TERMS), 20)
-        retired = sorted(k for k, (_, r) in c2paprobe.IPTC_TERMS.items() if r)
+        self.assertEqual(len(c2pareader.IPTC_TERMS), 20)
+        retired = sorted(k for k, (_, r) in c2pareader.IPTC_TERMS.items() if r)
         self.assertEqual(retired, ['digitalArt', 'minorHumanEdits', 'softwareImage'])
 
     def test_labels_are_iptcs_and_c2pa_terms_have_none(self):
-        st = c2paprobe.source_type(build.IPTC + 'trainedAlgorithmicMedia')
+        st = c2pareader.source_type(build.IPTC + 'trainedAlgorithmicMedia')
         self.assertEqual(st['label'], 'Created using Generative AI')
-        st = c2paprobe.source_type('http://c2pa.org/digitalsourcetype/trainedAlgorithmicData')
+        st = c2pareader.source_type('http://c2pa.org/digitalsourcetype/trainedAlgorithmicData')
         self.assertIsNone(st['label'])
         self.assertIsNone(st['ai'])
-        self.assertIsNone(c2paprobe.source_type(''))
+        self.assertIsNone(c2pareader.source_type(''))
 
     def test_unknown_never_overrides_a_known_value(self):
         store = build.store(build.manifest('urn:c2pa:m', actions=('c2pa.opened', 'c2pa.edited'),
@@ -139,7 +139,7 @@ class Xmp(unittest.TestCase):
 
     def test_attribute_and_element_forms(self):
         for as_attribute in (True, False):
-            r = c2paprobe.parse_xmp(build.xmp(as_attribute=as_attribute))
+            r = c2pareader.parse_xmp(build.xmp(as_attribute=as_attribute))
             self.assertEqual(r['source_type']['code'], 'trainedAlgorithmicMedia')
             self.assertEqual(r['creator_tool'], 'Test Tool')
             self.assertEqual(r['creators'], ['Jane Doe'])
@@ -149,7 +149,7 @@ class Xmp(unittest.TestCase):
         self.assertEqual(r['remote_manifest'], 'https://example.org/m.c2pa')
 
     def test_not_xml(self):
-        self.assertIsNone(c2paprobe.parse_xmp(b'<x:xmpmeta><unclosed</x:xmpmeta>'))
+        self.assertIsNone(c2pareader.parse_xmp(b'<x:xmpmeta><unclosed</x:xmpmeta>'))
         r = probe(build.jpeg(xmp_packet=b'<x:xmpmeta><unclosed</x:xmpmeta>'))
         self.assertTrue(r['errors'])
 
@@ -274,7 +274,7 @@ class Containers(unittest.TestCase):
             path = os.path.join(tmp, 'looks_like.jpg')
             with open(path, 'wb') as fh:
                 fh.write(build.png(c2pa=self.STORE))
-            r = c2paprobe.probe(path)
+            r = c2pareader.probe(path)
         self.assertEqual(r['container'], 'png')
         self.assertEqual(len(r['stores']), 1)
 
@@ -282,12 +282,12 @@ class Containers(unittest.TestCase):
 class Limits(unittest.TestCase):
 
     def test_oversized_block_is_refused_not_read(self):
-        old = c2paprobe.MAX_STORE
+        old = c2pareader.MAX_STORE
         try:
-            c2paprobe.MAX_STORE = 100
+            c2pareader.MAX_STORE = 100
             r = probe(build.png(c2pa=build.store()))
         finally:
-            c2paprobe.MAX_STORE = old
+            c2pareader.MAX_STORE = old
         self.assertFalse(r['complete'])
         self.assertIn('larger than', r['errors'][0])
 
@@ -311,7 +311,7 @@ class Limits(unittest.TestCase):
                 for _ in range(rng.randint(1, 8)):
                     data[rng.randrange(len(data))] = rng.randrange(256)
                 cut = rng.randint(1, len(data))
-                c2paprobe.probe_bytes(bytes(data[:cut]))
+                c2pareader.probe_bytes(bytes(data[:cut]))
 
 
 if __name__ == '__main__':
