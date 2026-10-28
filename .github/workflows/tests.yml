@@ -47,5 +47,5 @@ jobs:
         shell: bash
         run: |
           python -m pip install .
-          c2paprobe --version
-          python -c "import c2paprobe, sys; sys.exit(0 if c2paprobe.__version__ else 1)"
+          c2pareader --version
+          python -c "import c2pareader, sys; sys.exit(0 if c2pareader.__version__ else 1)"

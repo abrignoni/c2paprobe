@@ -1,11 +1,15 @@
-# c2paprobe
+# c2pareader
 
 A read-only reader for the Content Credentials (C2PA) and the IPTC digital source
 type a picture or video declares about itself, written for digital forensics work.
 This repository is the canonical home of the module that
 [iLEAPP](https://github.com/abrignoni/iLEAPP) and
-[ALEAPP](https://github.com/abrignoni/ALEAPP) vendor as `scripts/vendor/c2paprobe.py`.
+[ALEAPP](https://github.com/abrignoni/ALEAPP) vendor as `scripts/vendor/c2pareader.py`.
 Pure Python, no dependencies, Python 3.10 or later.
+
+It was called c2paprobe up to v0.1.1, the version GLEAPP v2026.5.6 carries.
+Only the name changed in v0.2.0: the module, the command and
+the import are now `c2pareader`, and the functions are the same.
 
 ## What it does not do
 
@@ -42,9 +46,9 @@ algorithm and RFC 3161 time-stamp. From XMP it reads the IPTC
 `dcterms:provenance`, the address of a manifest kept outside the file.
 
 ```python
-import c2paprobe
+import c2pareader
 
-result = c2paprobe.probe('photo.jpg')
+result = c2pareader.probe('photo.jpg')
 result['container']        # 'jpeg'
 result['complete']         # True: the walk reached the end of every place it reads
 result['stores']           # [{'where': 'APP11 JUMBF (...)', 'offset': ..., 'size': ...}]
@@ -55,7 +59,7 @@ result['xmp']              # one entry per XMP packet
 Or from the command line, which prints JSON:
 
 ```bash
-python -m c2paprobe photo.jpg
+python -m c2pareader photo.jpg
 ```
 
 ## When "nothing found" means something

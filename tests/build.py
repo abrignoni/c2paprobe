@@ -1,5 +1,5 @@
 """Writers for synthetic test files: CBOR, JUMBF, a C2PA manifest store, a DER
-certificate, an RFC 3161 token and each container c2paprobe reads.
+certificate, an RFC 3161 token and each container c2pareader reads.
 
 Everything here is built from the specifications, so a test that passes shows the
 reader and these writers agree. That the reader also agrees with files signed by
